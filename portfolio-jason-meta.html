@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jason Meta — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --accent: #e8ff47;
+    --accent2: #47ffe8;
+    --accent3: #ff6b47;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,255,71,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,255,71,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,255,71,0.08) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(71,255,232,0.05) 0%, transparent 70%);
+    bottom: 0; left: 10%;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+  }
+
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 12vw, 10rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.3s forwards;
+  }
+
+  .hero-name span { color: var(--accent); }
+
+  .hero-tagline {
+    font-size: 1.2rem;
+    color: var(--muted);
+    max-width: 550px;
+    font-weight: 300;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.7s forwards;
+  }
+
+  .badge {
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--surface);
+    transition: all 0.2s;
+  }
+
+  .badge:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.7s 1.1s forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* WIE BEN IK */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .about-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .about-card:hover {
+    border-color: rgba(232,255,71,0.25);
+    transform: translateY(-3px);
+  }
+
+  .about-card.wide {
+    grid-column: 1 / -1;
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .card-text {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.8;
+  }
+
+  /* CV */
+  .cv-timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .cv-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .cv-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+    padding: 1.75rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color 0.3s;
+  }
+
+  .cv-item:hover { border-color: rgba(232,255,71,0.2); }
+
+  .cv-item::before {
+    content: '';
+    position: absolute;
+    left: -2.5rem;
+    top: 1.75rem;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .cv-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .cv-role {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.3rem;
+  }
+
+  .cv-org {
+    color: var(--accent2);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+
+  .cv-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* BETAWERELDEN */
+  .bw-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .bw-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bw-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(232,255,71,0.06) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .bw-card:hover::before { opacity: 1; }
+  .bw-card:hover { border-color: rgba(232,255,71,0.25); transform: translateY(-4px); }
+
+  .bw-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+
+  .bw-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .bw-desc { color: var(--muted); font-size: 0.85rem; }
+
+  /* PROJECTEN */
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: start;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-card:hover { border-color: rgba(232,255,71,0.2); transform: translateX(4px); }
+  .project-card:hover::after { opacity: 1; }
+
+  .project-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--border);
+    line-height: 1;
+    min-width: 60px;
+    transition: color 0.3s;
+  }
+
+  .project-card:hover .project-num { color: rgba(232,255,71,0.3); }
+
+  .project-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-desc { color: var(--muted); font-size: 0.92rem; }
+
+  .project-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    padding: 0.25rem 0.75rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* COMPETENTIEMONITOR */
+  .competence-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .competence-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.3s;
+  }
+
+  .competence-item:hover { border-color: rgba(232,255,71,0.2); }
+
+  .comp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .comp-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .comp-level {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .comp-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+  }
+
+  .comp-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1s ease;
+  }
+
+  .comp-desc { color: var(--muted); font-size: 0.8rem; }
+
+  /* ODP */
+  .odp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .odp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    transition: all 0.3s;
+  }
+
+  .odp-card:hover { border-color: rgba(71,255,232,0.25); transform: translateY(-3px); }
+
+  .odp-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .odp-goal {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .odp-text { color: var(--muted); font-size: 0.85rem; }
+
+  .odp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* TROTS OP */
+  .trots-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .trots-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .trots-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,71,0.08), transparent 70%);
+  }
+
+  .trots-card:hover { border-color: rgba(255,107,71,0.25); transform: translateY(-3px); }
+
+  .trots-emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+  .trots-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.03em;
+    color: var(--accent3);
+    margin-bottom: 0.5rem;
+  }
+
+  .trots-text { color: var(--muted); font-size: 0.88rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+
+  footer span { color: var(--accent); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    max-width: 1100px;
+    margin: 0 auto;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    #hero { padding: 7rem 1.5rem 4rem; }
+    .about-grid, .bw-grid, .competence-grid, .odp-grid, .trots-grid { grid-template-columns: 1fr; }
+    .bw-grid { grid-template-columns: 1fr 1fr; }
+    .project-card { grid-template-columns: 1fr; }
+    .project-num { font-size: 2rem; }
+    .about-card.wide { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">JM</div>
+  <ul class="nav-links">
+    <li><a href="#over">Over mij</a></li>
+    <li><a href="#cv">CV</a></li>
+    <li><a href="#beta">Bètawerelden</a></li>
+    <li><a href="#projecten">Projecten</a></li>
+    <li><a href="#competenties">Competenties</a></li>
+    <li><a href="#odp">ODP</a></li>
+    <li><a href="#trots">Trots op</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-label">Portfolio — VWO 6 · 2024–2025</div>
+    <h1 class="hero-name">JASON<br><span>META</span></h1>
+    <p class="hero-tagline">Ambitieuze en hardwerkende leerling met een passie voor technologie, innovatie en de toekomst van onze wereld.</p>
+    <div class="hero-badges">
+      <span class="badge">🔬 Bèta & Technologie</span>
+      <span class="badge">💡 Probleemoplossend</span>
+      <span class="badge">⚙️ Technisch</span>
+      <span class="badge">🚀 Ambitieus</span>
+      <span class="badge">🌍 Innovatief</span>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- WIE BEN IK -->
+<section id="over">
+  <div class="section-header reveal">
+    <span class="section-number">01</span>
+    <h2 class="section-title">Wie Ben Ik</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-card wide reveal">
+      <div class="card-icon">👋</div>
+      <div class="card-title">Over Jason Meta</div>
+      <p class="card-text">Ik ben Jason Meta, een ambitieuze en hardwerkende leerling in mijn laatste jaar op het VWO. Ik heb altijd een grote interesse gehad in technologie en hoe dingen werken — van elektronica tot software, van duurzame mobiliteit tot slimme systemen. Ik ben iemand die graag uitdagingen aangaat en problemen van meerdere kanten bekijkt. Of het nu gaat om een technisch vraagstuk of een creatief probleem, ik zet mij volledig in om tot de beste oplossing te komen.</p>
+    </div>
+    <div class="about-card reveal">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">Mijn Drijfveer</div>
+      <p class="card-text">Ik word gedreven door nieuwsgierigheid en de wil om bij te dragen aan een betere toekomst. Ik geloof dat technologie en innovatie sleutels zijn tot de grote uitdagingen van onze tijd — van veiligheid op de weg tot duurzame landbouw en slimme infrastructuur.</p>
+    </div>
+    <div class="about-card reveal">
+      <div class="card-icon">💪</div>
+      <div class="card-title">Mijn Kracht</div>
+      <p class="card-text">Ik ben analytisch, creatief en doorzettend. Ik werk goed zelfstandig maar ook in teamverband. Mijn sterke punten zijn technisch inzicht, kritisch denken en de gave om complexe concepten helder te presenteren.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CV -->
+<section id="cv">
+  <div class="section-header reveal">
+    <span class="section-number">02</span>
+    <h2 class="section-title">Curriculum Vitae</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="cv-timeline">
+    <div class="cv-item reveal">
+      <div class="cv-year">2019 – HEDEN</div>
+      <div class="cv-role">VWO — Natuur & Technologie</div>
+      <div class="cv-org">VO-school · Nederland</div>
+      <p class="cv-desc">Profiel Natuur & Technologie met bijvakken zoals wiskunde D, natuurkunde en informatica. Actief deelgenomen aan diverse projecten en de jaarlijkse meesterproef.</p>
+    </div>
+    <div class="cv-item reveal">
+      <div class="cv-year">VWO 4 · 2022</div>
+      <div class="cv-role">Project: 3D-geprint Schaakspel</div>
+      <div class="cv-org">Schoolproject · Ontwerpen & Fabricage</div>
+      <p class="cv-desc">Ontworpen en gedrukt een volledig schaakbord met bijbehorende schaakstukken via 3D-printing. Vaardigheden opgedaan in CAD-ontwerp en additieve productietechnieken.</p>
+    </div>
+    <div class="cv-item reveal">
+      <div class="cv-year">VWO 5 · 2023–2024</div>
+      <div class="cv-role">Project: E-bike Innovatie & LoRa Wijngaard</div>
+      <div class="cv-org">Schoolproject · IoT & Duurzame Mobiliteit</div>
+      <p class="cv-desc">Twee projecten uitgevoerd: ideeën ontwikkeld voor veiligere en gezondere e-bikes, en een LoRa-communicatiesysteem gebouwd voor het monitoren van wijnbouwomstandigheden.</p>
+    </div>
+    <div class="cv-item reveal">
+      <div class="cv-year">VWO 6 · 2025</div>
+      <div class="cv-role">Meesterproef: Snelwegen van de Toekomst</div>
+      <div class="cv-org">Eindproject · Infrastructuur & Mobiliteit</div>
+      <p class="cv-desc">Uitgebreid onderzoek gedaan naar moderne snelwegen. Concrete voorstellen ontwikkeld voor veiliger en efficiënter wegvervoer, gericht op de toekomst van mobiliteit in Nederland.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- BETAWERELDEN -->
+<section id="beta">
+  <div class="section-header reveal">
+    <span class="section-number">03</span>
+    <h2 class="section-title">Bètawerelden</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="bw-grid">
+    <div class="bw-card reveal">
+      <div class="bw-icon">⚙️</div>
+      <div class="bw-name">Ontwerpen</div>
+      <p class="bw-desc">Van idee tot werkend prototype — ik beheers het ontwerpproces van schets tot realisatie.</p>
+    </div>
+    <div class="bw-card reveal">
+      <div class="bw-icon">💻</div>
+      <div class="bw-name">Digitale Wereld</div>
+      <p class="bw-desc">Programmeren, IoT-systemen en digitale communicatietechnologieën zoals LoRa en sensoren.</p>
+    </div>
+    <div class="bw-card reveal">
+      <div class="bw-icon">🌱</div>
+      <div class="bw-name">Natuur & Milieu</div>
+      <p class="bw-desc">Duurzame oplossingen voor landbouw, mobiliteit en omgevingsbeheer.</p>
+    </div>
+    <div class="bw-card reveal">
+      <div class="bw-icon">🚗</div>
+      <div class="bw-name">Mobiliteit</div>
+      <p class="bw-desc">E-bikes, snelwegen en de toekomst van transport en infrastructuur.</p>
+    </div>
+    <div class="bw-card reveal">
+      <div class="bw-icon">🔬</div>
+      <div class="bw-name">Wetenschap</div>
+      <p class="bw-desc">Analytisch denken, experimenteren en wetenschappelijk onderbouwde conclusies trekken.</p>
+    </div>
+    <div class="bw-card reveal">
+      <div class="bw-icon">🏗️</div>
+      <div class="bw-name">Techniek & Fabricage</div>
+      <p class="bw-desc">3D-printen, technisch tekenen en het bouwen van fysieke systemen en modellen.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PROJECTEN -->
+<section id="projecten">
+  <div class="section-header reveal">
+    <span class="section-number">04</span>
+    <h2 class="section-title">Projecten</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-list">
+
+    <div class="project-card reveal">
+      <div class="project-num">01</div>
+      <div>
+        <div class="project-year">VWO 4 · 2022</div>
+        <div class="project-title">3D-geprint Schaakspel</div>
+        <p class="project-desc">Voor dit project moest ik een volledig schaakbord ontwerpen en produceren, inclusief alle schaakstukken. Ik maakte gebruik van een 3D-printer voor de fabricage. Eerst heb ik elk stuk digitaal ontworpen in CAD-software, daarna zorgvuldig gesliced en geprint. Het resultaat was een complete schaakset, volledig zelfontworpen en gedrukt.</p>
+        <div class="project-tags">
+          <span class="tag">3D-printing</span>
+          <span class="tag">CAD-ontwerp</span>
+          <span class="tag">Fabricage</span>
+          <span class="tag">Productontwerp</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">02</div>
+      <div>
+        <div class="project-year">VWO 5 · 2023 — Project 1</div>
+        <div class="project-title">E-bike: Gezonder & Veiliger</div>
+        <p class="project-desc">In dit project stond de vraag centraal: hoe kan de e-bike gezonder en veiliger worden voor de gebruiker? Ik heb uitgebreid onderzoek gedaan naar bestaande risico's en kansen, en vervolgens concrete innovatieve ideeën bedacht en uitgewerkt. Denk aan verbeterde rijhulpsystemen, ergonomische aanpassingen en slimme veiligheidsfeatures die actief het rijgedrag kunnen ondersteunen.</p>
+        <div class="project-tags">
+          <span class="tag">Mobiliteit</span>
+          <span class="tag">Innovatie</span>
+          <span class="tag">Duurzaamheid</span>
+          <span class="tag">Veiligheid</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">03</div>
+      <div>
+        <div class="project-year">VWO 5 · 2024 — Project 2</div>
+        <div class="project-title">LoRa Monitorsysteem voor een Wijngaard</div>
+        <p class="project-desc">Voor dit technische IoT-project bouwde ik een LoRa-naar-LoRa communicatiesysteem dat ingezet wordt in een wijngaard. Het systeem meet en communiceert realtime omgevingsdata: luchtvochtigheid (te vochtig na regen of juist te droog), temperatuur en andere relevante omstandigheden. Op basis van deze data kunnen de wijnboeren tijdig ingrijpen om de oogst te beschermen. Ik heb zowel de hardware als de softwarelogica opgezet en getest.</p>
+        <div class="project-tags">
+          <span class="tag">LoRa</span>
+          <span class="tag">IoT</span>
+          <span class="tag">Sensortechnologie</span>
+          <span class="tag">Landbouw</span>
+          <span class="tag">Datamonitoring</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">04</div>
+      <div>
+        <div class="project-year">VWO 6 · 2025 — Meesterproef</div>
+        <div class="project-title">Snelwegen van de Toekomst</div>
+        <p class="project-desc">Voor mijn meesterproef heb ik de Nederlandse snelwegen als onderwerp gekozen. Ik heb de huidige staat van onze snelwegen grondig bestudeerd en onderzocht hoe deze veiliger, efficiënter en toekomstbestendiger gemaakt kunnen worden. Dit betrof zowel het verkeer op de snelwegen (zelfrijdende voertuigen, vlootbeheer, verkeersstromen) als de fysieke infrastructuur zelf (materiaalgebruik, slim wegbeheer, duurzame constructie). Mijn voorstellen zijn onderbouwd met data en visualisaties.</p>
+        <div class="project-tags">
+          <span class="tag">Infrastructuur</span>
+          <span class="tag">Mobiliteit</span>
+          <span class="tag">Veiligheid</span>
+          <span class="tag">Toekomstvisie</span>
+          <span class="tag">Onderzoek</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- COMPETENTIEMONITOR -->
+<section id="competenties">
+  <div class="section-header reveal">
+    <span class="section-number">05</span>
+    <h2 class="section-title">Competentiemonitor</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="competence-grid">
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">🔍 Onderzoeken</span>
+        <span class="comp-level">Gevorderd</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:85%"></div></div>
+      <p class="comp-desc">Ik kan zelfstandig een onderzoeksvraag opstellen, bronnen analyseren en tot onderbouwde conclusies komen.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">⚙️ Ontwerpen</span>
+        <span class="comp-level">Gevorderd</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:80%"></div></div>
+      <p class="comp-desc">Van programma van eisen naar werkend prototype. Ik beheers het iteratieve ontwerpproces.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">💻 Technisch Maken</span>
+        <span class="comp-level">Gevorderd</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:80%"></div></div>
+      <p class="comp-desc">Praktische uitvoering van technische projecten, van 3D-printen tot het bouwen van IoT-systemen.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">🎤 Presenteren</span>
+        <span class="comp-level">Bekwaam</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:72%"></div></div>
+      <p class="comp-desc">Ik kan mijn werk helder en gestructureerd presenteren aan zowel vakgenoten als een breed publiek.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">🤝 Samenwerken</span>
+        <span class="comp-level">Gevorderd</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:78%"></div></div>
+      <p class="comp-desc">Effectief werken in teams, taken verdelen en bijdragen aan een gedeeld doel.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">📋 Plannen & Organiseren</span>
+        <span class="comp-level">Bekwaam</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:70%"></div></div>
+      <p class="comp-desc">Projectplanning opstellen, deadlines bewaken en werk systematisch aanpakken.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">💡 Creatief Denken</span>
+        <span class="comp-level">Sterk</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:88%"></div></div>
+      <p class="comp-desc">Out-of-the-box oplossingen bedenken voor complexe technische en maatschappelijke vraagstukken.</p>
+    </div>
+    <div class="competence-item reveal">
+      <div class="comp-header">
+        <span class="comp-name">📝 Rapporteren</span>
+        <span class="comp-level">Bekwaam</span>
+      </div>
+      <div class="comp-bar"><div class="comp-fill" style="width:74%"></div></div>
+      <p class="comp-desc">Bevindingen schriftelijk vastleggen in heldere, gestructureerde rapporten en verslagen.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ODP -->
+<section id="odp">
+  <div class="section-header reveal">
+    <span class="section-number">06</span>
+    <h2 class="section-title">Persoonlijk Ontwikkelingsplan</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="odp-grid">
+    <div class="odp-card reveal">
+      <div class="odp-phase">Doelstelling 1</div>
+      <div class="odp-goal">Dieper in IoT & Programmeren</div>
+      <p class="odp-text">Ik wil mijn programmeervaardigheden verder uitbreiden, in het bijzonder op het gebied van embedded systems en IoT. Dit sluit aan bij mijn LoRa-project en mijn interesse in slimme systemen.</p>
+      <div class="odp-status"><div class="status-dot"></div> In uitvoering</div>
+    </div>
+    <div class="odp-card reveal">
+      <div class="odp-phase">Doelstelling 2</div>
+      <div class="odp-goal">Presentatievaardigheden Versterken</div>
+      <p class="odp-text">Ik merk dat ik nog groeipotentieel heb in het overtuigend presenteren van complexe technische informatie aan een niet-technisch publiek. Ik wil hier actief aan werken.</p>
+      <div class="odp-status"><div class="status-dot"></div> In uitvoering</div>
+    </div>
+    <div class="odp-card reveal">
+      <div class="odp-phase">Doelstelling 3</div>
+      <div class="odp-goal">Vervolgstudie Technische Universiteit</div>
+      <p class="odp-text">Mijn doel is om na het VWO een technische studie te volgen, zoals werktuigbouwkunde, elektrotechniek of industrieel ontwerpen. Ik bereid me voor door extra vakken en profielwerk.</p>
+      <div class="odp-status"><div class="status-dot"></div> Voorbereiding</div>
+    </div>
+    <div class="odp-card reveal">
+      <div class="odp-phase">Doelstelling 4</div>
+      <div class="odp-goal">Kritisch Denken & Onderbouwen</div>
+      <p class="odp-text">Ik wil leren om mijn keuzes en ontwerpen nog beter te onderbouwen met data en wetenschappelijke bronnen. De meesterproef heeft mij geleerd hoe belangrijk dit is.</p>
+      <div class="odp-status"><div class="status-dot"></div> In uitvoering</div>
+    </div>
+    <div class="odp-card reveal">
+      <div class="odp-phase">Doelstelling 5</div>
+      <div class="odp-goal">Praktijkervaring Opdoen</div>
+      <p class="odp-text">Ik wil een stage of bedrijfsbezoek doen bij een technologiebedrijf of ingenieursbureau om echte werkervaring op te doen en mijn netwerk te vergroten.</p>
+      <div class="odp-status"><div class="status-dot"></div> Gepland</div>
+    </div>
+    <div class="odp-card reveal">
+      <div class="odp-phase">Doelstelling 6</div>
+      <div class="odp-goal">Zelfstandig Werken Verdiepen</div>
+      <p class="odp-text">Grote projecten zelfstandig plannen en uitvoeren zonder afhankelijk te zijn van constante sturing. Ik wil leren om meer initiatief te nemen en proactief te handelen.</p>
+      <div class="odp-status"><div class="status-dot"></div> Bezig</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- TROTS OP -->
+<section id="trots">
+  <div class="section-header reveal">
+    <span class="section-number">07</span>
+    <h2 class="section-title">Trots Op</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="trots-grid">
+    <div class="trots-card reveal">
+      <div class="trots-emoji">🏆</div>
+      <div class="trots-title">Succesvol LoRa-systeem</div>
+      <p class="trots-text">Het feit dat mijn zelfgebouwde LoRa-netwerk in de wijngaard daadwerkelijk werkte en real-time data doorstuurde, gaf mij een enorm gevoel van trots. Van nul naar een volledig functionerend IoT-systeem — dat is iets wat ik altijd zal onthouden.</p>
+    </div>
+    <div class="trots-card reveal">
+      <div class="trots-emoji">🎓</div>
+      <div class="trots-title">Meesterproef Voltooid</div>
+      <p class="trots-text">Het afronden van de meesterproef over de snelwegen van de toekomst was een grote persoonlijke mijlpaal. Maanden van onderzoek, schrijven en presenteren hebben geleid tot een werk waar ik echt achter sta.</p>
+    </div>
+    <div class="trots-card reveal">
+      <div class="trots-emoji">🖨️</div>
+      <div class="trots-title">Volledig 3D-geprinte Schaakset</div>
+      <p class="trots-text">Elk stuk zelf ontworpen in CAD en vervolgens printen — het was mijn eerste grote maakproject en het bewees dat ik een idee van begin tot eind kan uitvoeren. Die schaakset staat nog steeds als pronkstuk op mijn bureau.</p>
+    </div>
+    <div class="trots-card reveal">
+      <div class="trots-emoji">🌱</div>
+      <div class="trots-title">Bijdragen aan Duurzame Innovatie</div>
+      <p class="trots-text">Met mijn e-bike project en het wijngaard-monitorsysteem heb ik bewezen dat ik technologie kan inzetten voor échte, duurzame doelen. Dit geeft mijn werk betekenis die verder gaat dan een schoolcijfer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span>Jason Meta</span> — Persoonlijk Portfolio · VWO 6</p>
+  <p style="margin-top:0.5rem; font-size:0.72rem;">Natuur & Technologie · Ambitie · Innovatie</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 100);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger children in grids
+  document.querySelectorAll('.about-grid, .bw-grid, .competence-grid, .odp-grid, .trots-grid').forEach(grid => {
+    grid.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transitionDelay = `${i * 0.08}s`;
+    });
+  });
+
+  // Animate bars on scroll
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.comp-fill').forEach(bar => {
+          const width = bar.style.width;
+          bar.style.width = '0%';
+          setTimeout(() => bar.style.width = width, 300);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const compSection = document.querySelector('#competenties');
+  if (compSection) barObserver.observe(compSection);
+</script>
+</body>
+</html>
